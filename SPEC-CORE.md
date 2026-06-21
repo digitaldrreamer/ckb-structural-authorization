@@ -6,7 +6,7 @@ Related: [`self-enforcing-treasury-ckb.md`](./self-enforcing-treasury-ckb.md), [
 
 This document specifies the **core pattern** only: a CKB cell whose type script permits spending when — and only when — a valid cell of an authorized type appears in the same transaction. No signature. No key. The condition is the authorization.
 
-This is a pattern — a reusable composition of CKB's primitives (cells, type scripts, transaction introspection, `since`, capacity model) — not a primitive itself. Applications (treasuries, escrows, conditional payments, …) build on this pattern. The most common application — a shared, donatable pool — is specified in [`SPEC-TREASURY.md`](./SPEC-TREASURY.md).
+This is a pattern — a reusable composition of CKB's primitives (cells, type scripts, transaction introspection, `since`, capacity model) — not a primitive itself. Most applications use this pattern directly (bounties, bonds, escrows, assurance contracts, …). One notable adaptation — a shared, donatable pool with temporary claims and replenishment — is specified in [`SPEC-TREASURY.md`](./SPEC-TREASURY.md).
 
 ---
 

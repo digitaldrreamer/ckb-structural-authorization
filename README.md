@@ -4,6 +4,23 @@ This repository defines the **Structural Authorization Pattern** for the Nervos 
 
 At its core, this project demonstrates how to build autonomous economic coordination without custodians. Unlike Ethereum smart contracts which often rely on admin keys or governance multisigs, this pattern leverages CKB's unique cell model and transaction introspection to create systems where **capacity moves by condition, not by key**. Once the rules are deployed, they are the sole authority.
 
+## Structural Authorization vs Treasury
+
+These are two different layers — not two names for the same thing.
+
+**Structural Authorization** ([`SPEC-CORE.md`](./SPEC-CORE.md)) is the pattern: a guarded cell whose type script permits spending only when a valid condition cell of an authorized type appears in the same transaction. No signature. No key. Most applications use this layer only — bug bounties, bonds, escrows, assurance contracts, bridge escrows, and the examples in [`POSSIBILITIES.md`](./POSSIBILITIES.md) are all structural authorization.
+
+**Self-Enforcing Treasury** ([`SPEC-TREASURY.md`](./SPEC-TREASURY.md)) is an adaptation of that pattern for a specific problem: a **shared, donatable pool** where capacity is temporarily allocated via proof cells and replenished after use. It adds donation, anchor/execute/abort lifecycle, and replenishment on top of SPEC-CORE. Governance proposal funding (CKB Transaction Firewall) is the flagship example.
+
+```
+SPEC-CORE (the pattern)
+  ├── Bug bounty, bonds, escrows, assurance pools, …   ← SPEC-CORE only
+  └── SPEC-TREASURY (shared-pool adaptation)
+        └── Governance treasury, milestone dev funds, …  ← SPEC-CORE + treasury lifecycle
+```
+
+If your application does not need a shared pool with temporary claims and capacity return, you do not need SPEC-TREASURY.
+
 ## Documentation & Specifications
 
 The project is structured into core specifications, applied patterns, and conceptual documentation:

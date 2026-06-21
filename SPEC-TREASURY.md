@@ -7,7 +7,7 @@ Related: [`self-enforcing-treasury-ckb.md`](./self-enforcing-treasury-ckb.md)
 
 This document specifies the **treasury pattern** — a shared, donatable pool built on the structural authorization pattern defined in SPEC-CORE. The pool's capacity can only move when a valid condition cell of an authorized type appears in the same transaction.
 
-Applications (governance, bounty, grants, …) are plug-ins that implement the condition script interface. Each is defined in a separate `SPEC-<APPLICATION>.md`.
+Treasury-pattern applications (governance, pooled dev funds, …) are plug-ins that implement the condition script interface. Each is defined in a separate `SPEC-<APPLICATION>.md`. Applications that only need structural authorization (bounties, bonds, escrows, …) are specified against [`SPEC-CORE.md`](./SPEC-CORE.md) directly — see [`POSSIBILITIES.md`](./POSSIBILITIES.md).
 
 ---
 
@@ -235,31 +235,39 @@ Distinguishing Execute from Abort is delegated to the condition script or handle
 
 ## 7. When to Use This Pattern
 
-The treasury pattern is designed for **multi-party, shared-pool, structurally-authorized coordination**. It fits when:
+This document specifies an **adaptation** of the structural authorization pattern ([`SPEC-CORE.md`](./SPEC-CORE.md)), not the pattern itself. Use SPEC-TREASURY only when all of the following apply:
 
-- Multiple parties need to spend from a common pool
-- No single party should be custodian
-- Spend conditions can be formally specified in a type script
+- Multiple parties need to spend from a **common, donatable pool**
+- No single party should be custodian of that pool
+- Claims are **temporary** — capacity leaves the pool to fund proof cells and should return after execute or abort
+- A **multi-phase lifecycle** (anchor → delay → execute/abort) is required
 - Throughput requirements are low (~1 operation per CKB block)
 
-### 7.1 Strong fit
+If any of these do not apply, use SPEC-CORE directly.
 
-| Application | Why it fits |
-|-------------|-------------|
-| **Governance treasury** | Multi-party proposals funded from shared pool; temporary claims return capacity |
-| **Bounty / grant programs** | Open participation; condition-based release; capacity returns or transfers to claimant |
-| **Public goods funding** | Pool of donations; disbursed on proof of milestone |
-| **Insurance / mutual pools** | Shared pool; claims validated by on-chain proof |
+### 7.1 Strong fit (treasury adaptation)
 
-### 7.2 Consider SPEC-CORE directly instead
+| Application | Why the treasury layer is needed |
+|-------------|----------------------------------|
+| **Governance treasury** | Shared pool funds proposal proof cells; capacity returns after execute or abort |
+| **Pooled dev / grant funds** | Donations accumulate; milestone proofs trigger disbursement; pool replenishes or tracks balance across claims |
+| **Insurance / mutual pools** | Shared premiums; claims consume proof cells; pool must persist across many policyholders |
 
-| Application | Why treasury pattern is unnecessary |
-|-------------|--------------------------------------|
-| **Vesting / escrow** | 1:1 relationship; no shared pool; simpler time-locked cell suffices |
-| **Salary / periodic payments** | 1:1 relationship; no multi-party coordination problem |
-| **Personal savings vault** | Single party; reintroduces key-based auth; defeats the premise |
+### 7.2 Use SPEC-CORE directly instead
 
-These applications can use the SPEC-CORE structural authorization pattern directly without the treasury layer's donation, lifecycle, and replenishment machinery.
+Most applications in [`POSSIBILITIES.md`](./POSSIBILITIES.md) use structural authorization only. They do not need donation, anchor/execute/abort, or replenishment machinery.
+
+| Application | Why SPEC-TREASURY is unnecessary |
+|-------------|----------------------------------|
+| **Bug bounties** | One guarded cell per bounty; single-phase claim; capacity transfers to claimant permanently |
+| **Accountability bonds** | 1:1 bond cell; referee attestation condition; no shared pool |
+| **Dominant assurance / crowdfund** | Guarded pool cell with condition-script modes; no treasury proof lifecycle |
+| **Bridge escrows** | 1:1 escrow cell; light-client proof condition; single-phase release |
+| **Vesting / escrow** | 1:1 relationship; time-locked guarded cell suffices |
+| **Salary / periodic payments** | 1:1 relationship; no multi-party pool |
+| **Personal savings vault** | Single party; defeats the structural authorization premise |
+
+> **Note:** A *program* that funds many individual bounties from one pool could use SPEC-TREASURY. An individual bounty cell does not — it is SPEC-CORE only.
 
 ---
 
@@ -281,12 +289,15 @@ Each `SPEC-<APPLICATION>.md` MUST define:
 - [ ] Edge-case / negative test matrix
 - [ ] MIN_PROOF_CAPACITY for this application
 
-### 8.1 Reference applications
+### 8.1 Reference applications (treasury layer)
+
+These applications use SPEC-CORE **and** the treasury adaptation defined in this document.
 
 | Application | Spec document | Status |
 |-------------|---------------|--------|
 | Governance (Transaction Firewall) | `SPEC-GOVERNANCE.md` | TBD |
-| Bounty | `SPEC-BOUNTY.md` | TBD |
+
+Applications that use structural authorization only (bounties, bonds, assurance contracts, …) are catalogued in [`POSSIBILITIES.md`](./POSSIBILITIES.md) and specified against [`SPEC-CORE.md`](./SPEC-CORE.md), not here.
 
 ---
 
