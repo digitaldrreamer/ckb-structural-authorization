@@ -36,11 +36,14 @@ The project is structured into core specifications, applied patterns, and concep
 * [**structural-authorization-ckb.md**](./structural-authorization-ckb.md) - The original essay describing the problem of governance funding on CKB and the insight that led to the pattern.
 * [**structural-authorization-ckb-comments.md**](./structural-authorization-ckb-comments.md) - Research notes, peer feedback, and discussion on the original pattern design.
 
-## The Core Concept
+## The Core Concept: Structural Authorization
 
-A CKB cell with an open lock whose type script permits spending only when a valid cell of a specific authorized type appears in the same transaction.
+**Structural Authorization** is a design pattern for the Nervos CKB blockchain where the authority to spend or modify state is granted by the *structure of the transaction itself*, rather than by a cryptographic signature.
 
-By decoupling the *authority to spend* (which becomes an open, zero-auth lock) from the *conditions of spending* (enforced by the type script validating a transaction's structure), we can build true self-enforcing protocols on CKB.
+At its simplest:
+> A CKB cell with an open lock whose type script permits spending only when a valid cell of a specific authorized type appears in the same transaction.
+
+By decoupling the *authority to spend* (which becomes an open, zero-auth lock) from the *conditions of spending* (enforced by the type script validating a transaction's structure), we can build true self-enforcing protocols on CKB without relying on admin keys or multisig committees.
 
 ## Visualizing the Pattern
 
